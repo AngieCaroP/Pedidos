@@ -2,11 +2,7 @@ let relojes = {
     "COL": [
         { "ID": 44376, "Nombre": "RELOJ SANDA 3002 NEGRO-A-E", "No de importacion": "EC" },
         { "ID": 39354, "Nombre": "RELOJ G-SHOCK OAK NEGRO RESINA-A-D", "No de importacion": "DC" },
-        {
-            "ID": 43626,
-            "Nombre": "CAJAS DE RELOJES",
-            "No de importacion": "DC"
-           },
+        { "ID": 43626, "Nombre": "CAJAS DE RELOJES", "No de importacion": "DC"},
            {
             "ID": 39807,
             "Nombre": "GARANTIA GR",
