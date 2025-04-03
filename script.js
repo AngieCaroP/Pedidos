@@ -15,6 +15,7 @@ function cargarExcel() {
             "VEN": XLSX.utils.sheet_to_json(workbook.Sheets["INVENTARIO VENEZUELA"]),
         };
 
+        limpiarCampos(); // Limpiar campos al cargar un nuevo archivo
         actualizarListaRelojes();
     };
     reader.readAsArrayBuffer(file);
@@ -22,6 +23,9 @@ function cargarExcel() {
 
 function actualizarListaRelojes() {
     const pais = document.getElementById("pais").value;
+
+    limpiarCampos(); // 🔹 Al cambiar de país, se vacían los campos
+
     if (!relojes[pais]) return;
 
     const listaRelojes = document.getElementById("listaRelojes");
@@ -92,4 +96,15 @@ function copiarTexto() {
     texto.select();
     document.execCommand("copy");
     alert("Texto copiado al portapapeles");
+}
+
+// 🔄 Limpiar todos los campos necesarios al cambiar de país
+function limpiarCampos() {
+    document.getElementById("campana").value = "";
+    document.getElementById("fecha").value = "";
+    document.getElementById("busquedaReloj").value = "";
+    document.getElementById("idReloj").value = "";
+    document.getElementById("persona").value = "";
+    document.getElementById("numImportacion").value = "";
+    document.getElementById("seleccionActual").value = "";
 }
