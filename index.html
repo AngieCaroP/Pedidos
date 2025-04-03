@@ -19,30 +19,31 @@
         </select>
 
         <label>Campaña:</label>
-        <select id="campana">
+        <select id="campana" onchange="actualizarSeleccion()">
             <option value="CBO">CBO</option>
             <option value="ABO">ABO</option>
             <option value="FLEXIBLE">FLEXIBLE</option>
         </select>
 
         <label>Fecha:</label>
-        <input type="date" id="fecha">
+        <input type="date" id="fecha" onchange="actualizarSeleccion()">
 
         <label>Nombre del Reloj:</label>
+        <input type="text" id="busquedaReloj" oninput="filtrarRelojes()" placeholder="Escriba para buscar...">
         <select id="nombreReloj" onchange="actualizarDatosReloj()"></select>
 
         <label>ID del Reloj:</label>
         <input type="text" id="idReloj" readonly>
 
-        <label>Número de Importación:</label>
-        <input type="text" id="numImportacion" readonly>
-
         <label>Persona quien lo hizo:</label>
-        <select id="persona">
+        <select id="persona" onchange="actualizarSeleccion()">
             <option value="DP">DP</option>
             <option value="CP">CP</option>
             <option value="KO">KO</option>
         </select>
+
+        <label>Número de Importación:</label>
+        <input type="text" id="numImportacion" readonly>
 
         <label>Cargar base de datos:</label>
         <input type="file" id="fileInput" accept=".xlsx, .xls" onchange="cargarExcel()">
