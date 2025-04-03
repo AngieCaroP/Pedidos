@@ -29,8 +29,10 @@
         <input type="date" id="fecha" onchange="actualizarSeleccion()">
 
         <label>Nombre del Reloj:</label>
-        <input type="text" id="busquedaReloj" oninput="filtrarRelojes()" placeholder="Escriba para buscar...">
-        <select id="nombreReloj" onchange="actualizarDatosReloj()"></select>
+        <input type="text" id="busquedaReloj" list="listaRelojes" oninput="filtrarRelojes()" onchange="actualizarDatosReloj()" placeholder="Escriba para buscar...">
+        <datalist id="listaRelojes"></datalist>
+        
+
 
         <label>ID del Reloj:</label>
         <input type="text" id="idReloj" readonly>
