@@ -1,0 +1,4 @@
+body { font-family: Arial, sans-serif; margin: 20px; }
+.container { max-width: 500px; margin: auto; }
+label, select, input, button, textarea { display: block; margin: 10px 0; width: 100%; padding: 8px; }
+textarea { height: 60px; resize: none; }
