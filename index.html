@@ -13,9 +13,9 @@
         <h2>Configuración de Campañas</h2>
         <label>País:</label>
         <select id="pais" onchange="actualizarListaRelojes()">
-            <option value="ECU">Ecuador</option>
-            <option value="COL">Colombia</option>
-            <option value="VEN">Venezuela</option>
+            <option value="ECU">ECU</option>
+            <option value="COL">COL</option>
+            <option value="VEN">VEN</option>
         </select>
 
         <label>Campaña:</label>
@@ -50,6 +50,7 @@
 
         <label>Selección actual:</label>
         <textarea id="seleccionActual" rows="3" readonly></textarea>
+        <button onclick="copiarTexto()">Copiar</button>
     </div>
 </body>
 </html>

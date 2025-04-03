@@ -13,7 +13,7 @@ function cargarExcel() {
         relojes = {
             "COL": XLSX.utils.sheet_to_json(workbook.Sheets["INVENTARIO COL"]),
             "ECU": XLSX.utils.sheet_to_json(workbook.Sheets["INVENTARIO ECUADOR DP"]),
-            "VEN": XLSX.utils.sheet_to_json(workbook.Sheets["INVENTARIO VENEZUELA"]),
+            "VEN": XLSX.utils.sheet_to_json(workbook.Sheets["INVENTARIO SOCIEDAD"]),
         };
         
         actualizarListaRelojes();
@@ -40,16 +40,27 @@ function actualizarListaRelojes() {
 
 function actualizarDatosReloj() {
     const pais = document.getElementById("pais").value;
+    const campana = document.getElementById("campana").value;
+    const fecha = document.getElementById("fecha").value;
     const nombreSeleccionado = document.getElementById("nombreReloj").value;
+    const persona = document.getElementById("persona").value;
     const reloj = relojes[pais]?.find(r => r.Nombre === nombreSeleccionado || r["Nombre del producto"] === nombreSeleccionado);
 
     if (reloj) {
         document.getElementById("idReloj").value = reloj.ID;
         document.getElementById("numImportacion").value = reloj["No de importacion"];
-        document.getElementById("seleccionActual").value = `País: ${pais}\nReloj: ${nombreSeleccionado}\nID: ${reloj.ID}\nImportación: ${reloj["No de importacion"]}`;
+        const textoFinal = `${pais}-${campana}-${fecha}-${nombreSeleccionado}-${reloj.ID}-${reloj["No de importacion"]}-${persona}`;
+        document.getElementById("seleccionActual").value = textoFinal;
     } else {
         document.getElementById("idReloj").value = "";
         document.getElementById("numImportacion").value = "";
         document.getElementById("seleccionActual").value = "";
     }
+}
+
+function copiarTexto() {
+    const texto = document.getElementById("seleccionActual");
+    texto.select();
+    document.execCommand("copy");
+    alert("Texto copiado al portapapeles");
 }
