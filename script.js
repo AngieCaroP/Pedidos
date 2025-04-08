@@ -232,6 +232,7 @@ let relojes = {
         {"ID":"2974","Nombre del producto":"RELOJ CUADRADO G-SHOCK NEGRO","No de importacion":"DE"},
         {"ID":"2497","Nombre del producto":"RELOJ SANDA 739 NEGRO","No de importacion":"DE"},
         {"ID":"5544","Nombre del producto":"RELOJ GSHOCK DIGITAL VERDE","No de importacion":"DE"},
+        {"ID":"7757","Nombre del producto":"RELOJ G-SHOCK OAK NEGRO 2-A","No de importacion":"DE"},
         {"ID":"3725","Nombre del producto":"RELOJ GSHOCK DIGITAL VERDE","No de importacion":"DE"},
         {"ID":"5899","Nombre del producto":"REOJ WlISTH 6144","No de importacion":"KME"},
         {"ID":"5897","Nombre del producto":"RELOJ ONALA ON3809","No de importacion":"KME"},
