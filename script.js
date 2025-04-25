@@ -183,7 +183,7 @@ let relojes = {
         {"ID":"32903","Nombre":"RELOJ SANDA 739  NEGRO + REGALO-A-E","No de importacion":"EC"},
         {"ID":"32899","Nombre":"RELOJ GX-56BB -B.","No de importacion":"B.C"},
         {"ID":"32869","Nombre":"RELOJ CASIO 2100-A-D","No de importacion":"DC"},
-        {"ID":"2973","Nombre del producto":"TRATAMIENTO GOTAS RESCATE","No de importacion":"KRE"},
+        {"ID":"2973","Nombre del producto":"TRATAMIENTO GOTAS RESCATE","No de importacion":"KV"},
     ],
     "ECU": [
         {"ID":"3726","Nombre del producto":"ARETES HOJA ESMERALDA","No de importacion":"KE"},
@@ -337,8 +337,8 @@ let relojes = {
         { "ID": 2497, "Nombre del producto": "RELOJ SANDA 739 NEGRO","No de importacion": "DE"},
         { "ID": 44376,"Nombre del producto": "RELOJ SANDA 3002 NEGRO-A-E", "No de importacion": "EC"},
         { "ID": 46726, "Nombre del producto": "RELOJ G-SHOCK OAK NEGRO RESINA-A-D", "No de importacion": "DC"},
-        {"ID": 46908,"Nombre del producto": "CASIO VINTAJE PLATEADO-B-A-ED","No de importacion": "EDC"},
-        {"ID":2973,"Nombre del producto":"TRATAMIENTO GOTAS RESCATE","No de importacion":"KRE"},
+        { "ID": 46908,"Nombre del producto": "CASIO VINTAJE PLATEADO-B-A-ED","No de importacion": "EDC"},
+        { "ID": 2973,"Nombre del producto":"TRATAMIENTO GOTAS RESCATE","No de importacion":"KV"},
     ]
 };
 
