@@ -330,7 +330,6 @@ let relojes = {
         {"ID":"5346","Nombre del producto":"ARETES MARIPOSA","No de importacion":"EE"},
         {"ID":"5028","Nombre del producto":"RELOJ SANDA 3002 NEGRO","No de importacion":"EE"},
         {"ID":"5027","Nombre del producto":"RELOJ SANDA 3002 NEGRO","No de importacion":"EE"},
-        {"ID":"4835","Nombre del producto":"RELOJ GSHOK GBD 200","No de importacion":"EE"}
     ],
     "VEN": [
         { "ID": 2497, "Nombre del producto": "RELOJ SANDA 739 NEGRO", "No de importacion": "DE" },
@@ -339,7 +338,7 @@ let relojes = {
         { "ID": 44376,"Nombre del producto": "RELOJ SANDA 3002 NEGRO-A-E", "No de importacion": "EC"},
         { "ID": 46726, "Nombre del producto": "RELOJ G-SHOCK OAK NEGRO RESINA-A-D", "No de importacion": "DC"},
         {"ID": 46908,"Nombre del producto": "CASIO VINTAJE PLATEADO-B-A-ED","No de importacion": "EDC"},
-        {"ID":"2973","Nombre del producto":"TRATAMIENTO GOTAS RESCATE","No de importacion":"KRE"}
+        {"ID":2973,"Nombre del producto":"TRATAMIENTO GOTAS RESCATE","No de importacion":"KRE"},
     ]
 };
 
