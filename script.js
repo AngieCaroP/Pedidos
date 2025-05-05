@@ -330,6 +330,7 @@ let relojes = {
         {"ID":"5346","Nombre del producto":"ARETES MARIPOSA","No de importacion":"EE"},
         {"ID":"5028","Nombre del producto":"RELOJ SANDA 3002 NEGRO","No de importacion":"EE"},
         {"ID":"5027","Nombre del producto":"RELOJ SANDA 3002 NEGRO","No de importacion":"EE"},
+        {"ID":"6571","Nombre del producto":"RELOJ WLISTH 6144-A","No de importacion":"KM"},
     ],
     "VEN": [
         { "ID": 2497, "Nombre del producto": "RELOJ SANDA 739 NEGRO", "No de importacion": "DE" },
