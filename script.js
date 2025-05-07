@@ -376,17 +376,6 @@ function actualizarDatosReloj() {
     actualizarSeleccion();
 }
 
-
-function limpiarCampos() {
-    document.getElementById("campana").value = "";
-    document.getElementById("fecha").value = "";
-    document.getElementById("busquedaReloj").value = "";
-    document.getElementById("idReloj").value = "";
-    document.getElementById("persona").value = "";
-    document.getElementById("numImportacion").value = "";
-    document.getElementById("seleccionActual").value = "";
-}
-
 // Contadores para cada plataforma
 let contadores = {
     'F': 1, // Facebook
@@ -404,10 +393,6 @@ window.onload = function() {
     }
 };
 
-//reinciciar el contador desde 001 
-//localStorage.removeItem('contadores');
-
-
 // Función para generar el código de guía (sin incrementar aún)
 function prepararCodigoGuia(plataforma) {
     if (!plataforma) return '';
@@ -417,31 +402,50 @@ function prepararCodigoGuia(plataforma) {
     return `${plataforma}${numero}`;
 }
 
-// Modificar la función actualizarSeleccion
+// Variable global para el contador
+let contadorGuia = 1;
+
 function actualizarSeleccion() {
     const pais = document.getElementById("pais").value;
+    const plataforma = document.getElementById("plataforma").value;
     const campana = document.getElementById("campana").value;
     const fecha = document.getElementById("fecha").value;
     const nombreSeleccionado = document.getElementById("busquedaReloj").value;
     const idReloj = document.getElementById("idReloj").value;
     const persona = document.getElementById("persona").value;
     const numImportacion = document.getElementById("numImportacion").value;
-    const plataforma = document.getElementById("plataforma").value;
     
-    // Preparar código de guía (sin incrementar aún)
-    codigoGuiaActual = plataforma ? prepararCodigoGuia(plataforma) : '';
-    
-    const textoFinal = `${codigoGuiaActual ? codigoGuiaActual + '-' : ''}${pais}-${campana}-${fecha}-${nombreSeleccionado}-${idReloj}-${persona}-${numImportacion}`;
-    document.getElementById("seleccionActual").value = textoFinal;
+    if (pais && plataforma && campana && fecha && nombreSeleccionado && idReloj && persona) {
+        // Formato: COL-F005--ABO-2025-05-15-RELOJ SMARWHAT NORTH511-A-ED-44477-CP-EDC-001
+        const textoFinal = `${pais}-${plataforma}${contadorGuia.toString().padStart(3, '0')}-${campana}-${fecha}-${nombreSeleccionado}-${idReloj}-${persona}-${numImportacion}`;
+        
+        document.getElementById("seleccionActual").value = textoFinal;
+        
+        // Incrementar el contador para la próxima vez
+        contadorGuia++;
+        
+        // Opcional: Guardar el contador en localStorage para persistencia
+        localStorage.setItem('contadorGuia', contadorGuia);
+    } else {
+        document.getElementById("seleccionActual").value = "Complete todos los campos para generar el resultado";
+    }
 }
 
-// Modificar la función copiarTexto para incrementar solo al copiar
+// Al cargar la página, intentar recuperar el contador guardado
+window.addEventListener('load', function() {
+    const contadorGuardado = localStorage.getItem('contadorGuia');
+    if (contadorGuardado) {
+        contadorGuia = parseInt(contadorGuardado);
+    }
+});
+
 function copiarTexto() {
     // 1. Validar que todos los campos estén llenos
     const camposRequeridos = [
         'pais', 'campana', 'fecha', 'busquedaReloj',
         'idReloj', 'persona', 'numImportacion', 'plataforma'
     ];
+    
     for (let id of camposRequeridos) {
         const el = document.getElementById(id);
         if (!el || !el.value.trim()) {
@@ -471,4 +475,15 @@ function copiarTexto() {
     }
 
     alert("Texto copiado y guardado correctamente.");
+}
+
+function limpiarCampos() {
+    document.getElementById("campana").value = "";
+    document.getElementById("fecha").value = "";
+    document.getElementById("busquedaReloj").value = "";
+    document.getElementById("idReloj").value = "";
+    document.getElementById("persona").value = "";
+    document.getElementById("numImportacion").value = "";
+    document.getElementById("seleccionActual").value = "";
+    // No limpiamos país ni plataforma para mantener la configuración
 }
