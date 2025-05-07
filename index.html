@@ -62,15 +62,29 @@
                 <label>Número de Importación</label>
                 <input type="text" id="numImportacion" readonly>
             </div>
+
+            <div class="form-group">
+                <label>Plataforma</label>
+                <select id="plataforma" onchange="actualizarSeleccion()">
+                    <option value="">Seleccionar Plataforma</option>
+                    <option value="F">Facebook</option>
+                    <option value="T">TikTok</option>
+                </select>
+            </div>
         </div>
+
 
         <div class="resultado">
             <label>Resultado Final:</label>
             <div class="resultado-container">
                 <textarea id="seleccionActual" rows="3" readonly>Complete todos los campos para generar el resultado</textarea>
                 <button onclick="copiarTexto()">Copiar</button>
+                <button onclick="limpiarCampos()">limpiar</button>
+               
             </div>
         </div>
+      <a href="guias.html" target="_blank">Ver historial de guías generadas</a>
+          
     </div>
 </body>
 </html>

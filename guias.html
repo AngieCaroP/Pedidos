@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Historial de Guías</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Historial de Guías Generadas</h1>
+    <ul id="listaGuias"></ul>
+    <button onclick="limpiarHistorial()">Limpiar Historial</button>
+  </div>
+
+  <script>
+    const lista = document.getElementById('listaGuias');
+    const guiasGuardadas = JSON.parse(localStorage.getItem('guiasGeneradas')) || [];
+
+    guiasGuardadas.forEach(g => {
+      const li = document.createElement('li');
+      li.textContent = `${g.fecha} → ${g.texto}`;
+      lista.appendChild(li);
+    });
+
+    function limpiarHistorial() {
+      if (confirm('¿Estás segura de eliminar todo el historial?')) {
+        localStorage.removeItem('guiasGeneradas');
+        location.reload();
+      }
+    }
+  </script>
+</body>
+</html>
