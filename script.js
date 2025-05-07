@@ -437,27 +437,38 @@ function actualizarSeleccion() {
 
 // Modificar la función copiarTexto para incrementar solo al copiar
 function copiarTexto() {
-    const texto = document.getElementById("seleccionActual");
-    texto.select();
-    document.execCommand("copy");
-
-    const plataforma = document.getElementById("plataforma").value;
-    const textoFinal = texto.value;
-
-    // Guardar en historial
-    if (textoFinal.trim()) {
-        const guias = JSON.parse(localStorage.getItem('guiasGeneradas')) || [];
-        const hoy = new Date().toISOString().split('T')[0]; // Solo fecha
-        guias.push({ fecha: hoy, texto: textoFinal });
-        localStorage.setItem('guiasGeneradas', JSON.stringify(guias));
+    // 1. Validar que todos los campos estén llenos
+    const camposRequeridos = [
+        'pais', 'campana', 'fecha', 'busquedaReloj',
+        'idReloj', 'persona', 'numImportacion', 'plataforma'
+    ];
+    for (let id of camposRequeridos) {
+        const el = document.getElementById(id);
+        if (!el || !el.value.trim()) {
+            alert('Por favor completa todos los campos antes de copiar.');
+            return; // detiene la función si falta algo
+        }
     }
 
-    // Incrementar contador
+    // 2. Copiar al portapapeles
+    const textarea = document.getElementById("seleccionActual");
+    textarea.select();
+    document.execCommand("copy");
+
+    // 3. Guardar historial
+    const textoFinal = textarea.value;
+    const guias = JSON.parse(localStorage.getItem('guiasGeneradas')) || [];
+    const hoy = new Date().toISOString().split('T')[0];
+    guias.push({ fecha: hoy, texto: textoFinal });
+    localStorage.setItem('guiasGeneradas', JSON.stringify(guias));
+
+    // 4. Incrementar contador
+    const plataforma = document.getElementById("plataforma").value;
     if (plataforma && codigoGuiaActual) {
         contadores[plataforma]++;
         localStorage.setItem('contadores', JSON.stringify(contadores));
         codigoGuiaActual = '';
     }
 
-    alert("Texto copiado y guardado");
+    alert("Texto copiado y guardado correctamente.");
 }

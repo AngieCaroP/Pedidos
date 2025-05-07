@@ -2,36 +2,453 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Historial de Guías</title>
-  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    .contenedor-filtros {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 20px;
+      background-color: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    input[type="text"], input[type="date"] {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      width: 200px;
+      font-size: 14px;
+    }
+    input[type="text"]:focus, input[type="date"]:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+    }
+    .card-dia {
+      background-color: #fff;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 15px;
+      page-break-inside: avoid;
+    }
+    .card-dia h3 {
+      margin: 0 0 10px 0;
+      font-size: 1.2em;
+      color: #333;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #eee;
+    }
+    .plataforma {
+      margin-top: 15px;
+    }
+    .plataforma h4 {
+      margin: 0 0 8px 0;
+      color: #444;
+      font-size: 1em;
+    }
+    .guia {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #f9f9f9;
+      padding: 8px 12px;
+      margin: 5px 0;
+      border-radius: 5px;
+      border-left: 4px solid #007bff;
+    }
+    .guia span {
+      flex-grow: 1;
+      margin-right: 10px;
+      word-break: break-word;
+    }
+    button.copiar {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background-color 0.2s;
+    }
+    button.copiar:hover {
+      background-color: #0069d9;
+    }
+    .acciones {
+      margin-top: 25px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .acciones button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .exportar { 
+      background-color: #28a745; 
+      color: white; 
+    }
+    .exportar:hover {
+      background-color: #218838;
+    }
+    .exportarExcel { 
+      background-color: #17a2b8; 
+      color: white; 
+    }
+    .exportarExcel:hover {
+      background-color: #138496;
+    }
+    .exportarPdf { 
+      background-color: #6c757d; 
+      color: white; 
+    }
+    .exportarPdf:hover {
+      background-color: #5a6268;
+    }
+    .limpiar { 
+      background-color: #dc3545; 
+      color: white; 
+    }
+    .limpiar:hover {
+      background-color: #c82333;
+    }
+    .btn-volver {
+      background-color: #ffc107;
+      color: #212529;
+    }
+    .btn-volver:hover {
+      background-color: #e0a800;
+    }
+    
+    /* Estilos para mensaje cuando no hay guías */
+    .sin-guias {
+      text-align: center;
+      padding: 30px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      color: #6c757d;
+    }
+    
+    /* Estilos específicos para PDF */
+    .pdf-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .pdf-title {
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+    }
+    .pdf-subtitle {
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+  
+  <!-- Agregar estas bibliotecas -->
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h1>Historial de Guías Generadas</h1>
-    <ul id="listaGuias"></ul>
-    <button onclick="limpiarHistorial()">Limpiar Historial</button>
+  <h1>📘 Historial de Guías</h1>
+
+  <div class="contenedor-filtros">
+    <input type="text" id="buscarGuia" placeholder="Buscar por texto..." title="Buscar en el texto de las guías">
+    <input type="date" id="filtrarFecha" title="Filtrar por fecha específica">
+  </div>
+
+  <div id="historialGuias">
+    <!-- Tarjetas por día aparecerán aquí -->
+  </div>
+
+  <div class="acciones">
+    <button class="exportar">⬇ Exportar como TXT</button>
+    <button class="exportarExcel">⬇ Exportar como Excel</button>
+    <button class="exportarPdf">⬇ Exportar como PDF</button>
+    <!--<button class="limpiar">🗑 Limpiar historial</button>-->
     <button onclick="window.location.href='index.html'" class="btn-volver">
-        Volver al inicio
+      ← Volver al inicio
     </button>
-    
   </div>
 
   <script>
-    const lista = document.getElementById('listaGuias');
-    const guiasGuardadas = JSON.parse(localStorage.getItem('guiasGeneradas')) || [];
+    // Inicializar jsPDF
+    const { jsPDF } = window.jspdf;
+    
+    // Obtener guías del localStorage
+    const guias = JSON.parse(localStorage.getItem('guiasGeneradas')) || [];
+    const historialDiv = document.getElementById('historialGuias');
+    const inputBuscar = document.getElementById('buscarGuia');
+    const inputFecha = document.getElementById('filtrarFecha');
 
-    guiasGuardadas.forEach(g => {
-      const li = document.createElement('li');
-      li.textContent = `${g.fecha} → ${g.texto}`;
-      lista.appendChild(li);
+    // Función para renderizar el historial con filtros
+    function renderHistorial(filtrarTexto = '', filtrarPorFecha = '') {
+      historialDiv.innerHTML = '';
+
+      // Aplicar filtros
+      const guiasFiltradas = guias.filter(g => {
+        const coincideTexto = g.texto.toLowerCase().includes(filtrarTexto.toLowerCase());
+        const coincideFecha = filtrarPorFecha ? g.fecha === filtrarPorFecha : true;
+        return coincideTexto && coincideFecha;
+      });
+
+      // Mostrar mensaje si no hay guías
+      if (guiasFiltradas.length === 0) {
+        const mensaje = document.createElement('div');
+        mensaje.className = 'sin-guias';
+        mensaje.innerHTML = `
+          <p>No se encontraron guías ${filtrarTexto || filtrarPorFecha ? 'que coincidan con los filtros' : 'en el historial'}.</p>
+          <p>Genera nuevas guías desde la página principal.</p>
+        `;
+        historialDiv.appendChild(mensaje);
+        return;
+      }
+
+      // Agrupar por fecha
+      const guiasPorFecha = {};
+      guiasFiltradas.forEach(g => {
+        if (!guiasPorFecha[g.fecha]) guiasPorFecha[g.fecha] = [];
+        guiasPorFecha[g.fecha].push(g);
+      });
+
+      // Ordenar fechas de más reciente a más antigua
+      Object.keys(guiasPorFecha).sort((a, b) => new Date(b) - new Date(a)).forEach(fecha => {
+        const card = document.createElement('div');
+        card.className = 'card-dia';
+        card.innerHTML = `<h3>📅 ${fecha}</h3>`;
+
+        // Agrupar por plataforma (Facebook, TikTok, etc.)
+        const plataformas = {};
+        guiasPorFecha[fecha].forEach(g => {
+          const letra = g.texto[0]?.toUpperCase();
+          let plataforma = 'Otras plataformas';
+          
+          if (letra === 'F') plataforma = 'Facebook';
+          else if (letra === 'T') plataforma = 'TikTok';
+          else if (letra === 'I') plataforma = 'Instagram';
+          else if (letra === 'W') plataforma = 'WhatsApp';
+          
+          if (!plataformas[plataforma]) plataformas[plataforma] = [];
+          plataformas[plataforma].push(g.texto);
+        });
+
+        // Crear secciones por plataforma
+        for (const p in plataformas) {
+          const divP = document.createElement('div');
+          divP.className = 'plataforma';
+          divP.innerHTML = `<h4>${p}</h4>`;
+
+          // Añadir cada guía
+          plataformas[p].forEach(texto => {
+            const gDiv = document.createElement('div');
+            gDiv.className = 'guia';
+            
+            const span = document.createElement('span');
+            span.textContent = texto;
+
+            const btn = document.createElement('button');
+            btn.className = 'copiar';
+            btn.textContent = '📋 Copiar';
+            btn.onclick = () => {
+              navigator.clipboard.writeText(texto).then(() => {
+                btn.textContent = '✅ Copiado!';
+                setTimeout(() => btn.textContent = '📋 Copiar', 2000);
+              }).catch(err => {
+                console.error('Error al copiar:', err);
+                btn.textContent = '❌ Error';
+                setTimeout(() => btn.textContent = '📋 Copiar', 2000);
+              });
+            };
+
+            gDiv.appendChild(span);
+            gDiv.appendChild(btn);
+            divP.appendChild(gDiv);
+          });
+
+          card.appendChild(divP);
+        }
+
+        historialDiv.appendChild(card);
+      });
+    }
+
+    // Eventos para los filtros
+    inputBuscar.addEventListener('input', () => {
+      renderHistorial(inputBuscar.value, inputFecha.value);
     });
 
-    function limpiarHistorial() {
-      if (confirm('¿Estás segura de eliminar todo el historial?')) {
+    inputFecha.addEventListener('change', () => {
+      renderHistorial(inputBuscar.value, inputFecha.value);
+    });
+
+    // Limpiar historial
+    document.querySelector('.limpiar').addEventListener('click', () => {
+      if (confirm("¿Estás seguro de que deseas borrar todo el historial? Esta acción no se puede deshacer.")) {
         localStorage.removeItem('guiasGeneradas');
-        location.reload();
+        guias.length = 0; // Vaciar el array
+        renderHistorial(); // Volver a renderizar
       }
-    }
+    });
+
+    // Exportar a Excel
+    document.querySelector('.exportarExcel').addEventListener('click', () => {
+      if (guias.length === 0) {
+        alert("No hay historial para exportar.");
+        return;
+      }
+
+      // Preparar datos para Excel
+      const datos = guias.map(g => ({ 
+        Fecha: g.fecha, 
+        Plataforma: g.texto[0] === 'F' ? 'Facebook' : g.texto[0] === 'T' ? 'TikTok' : 'Otra',
+        Texto: g.texto 
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(datos);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Historial");
+
+      // Generar nombre de archivo con fecha actual
+      const hoy = new Date();
+      const fechaStr = hoy.toISOString().split('T')[0];
+      XLSX.writeFile(wb, `historial_guias_${fechaStr}.xlsx`);
+    });
+
+    // Exportar a TXT
+    document.querySelector('.exportar').addEventListener('click', () => {
+      if (guias.length === 0) {
+        alert("No hay historial para exportar.");
+        return;
+      }
+
+      // Formatear contenido para TXT
+      let contenido = "HISTORIAL DE GUÍAS\n";
+      contenido += "==================\n\n";
+      
+      // Agrupar por fecha para el TXT
+      const guiasPorFecha = {};
+      guias.forEach(g => {
+        if (!guiasPorFecha[g.fecha]) guiasPorFecha[g.fecha] = [];
+        guiasPorFecha[g.fecha].push(g);
+      });
+
+      // Ordenar fechas
+      Object.keys(guiasPorFecha).sort((a, b) => new Date(b) - new Date(a)).forEach(fecha => {
+        contenido += `Fecha: ${fecha}\n`;
+        contenido += "------------------------\n";
+        
+        guiasPorFecha[fecha].forEach((g, i) => {
+          contenido += `${i+1}. ${g.texto}\n\n`;
+        });
+        
+        contenido += "\n";
+      });
+
+      // Crear y descargar archivo
+      const blob = new Blob([contenido], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `historial_guias_${new Date().toISOString().split('T')[0]}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    // Exportar a PDF
+    document.querySelector('.exportarPdf').addEventListener('click', async () => {
+      if (guias.length === 0) {
+        alert("No hay historial para exportar.");
+        return;
+      }
+
+      try {
+        // Crear un contenedor temporal para el PDF
+        const pdfContainer = document.createElement('div');
+        pdfContainer.style.position = 'absolute';
+        pdfContainer.style.left = '-9999px';
+        pdfContainer.style.width = '800px';
+        pdfContainer.style.padding = '20px';
+        pdfContainer.style.backgroundColor = 'white';
+        
+        // Añadir encabezado
+        const header = document.createElement('div');
+        header.className = 'pdf-header';
+        header.innerHTML = `
+          <div class="pdf-title">Historial de Guías</div>
+          <div class="pdf-subtitle">Generado el ${new Date().toLocaleDateString('es-ES', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          })}</div>
+        `;
+        pdfContainer.appendChild(header);
+        
+        // Clonar el contenido del historial (sin botones)
+        const historialClone = document.getElementById('historialGuias').cloneNode(true);
+        historialClone.querySelectorAll('.copiar').forEach(btn => btn.remove());
+        pdfContainer.appendChild(historialClone);
+        document.body.appendChild(pdfContainer);
+
+        // Configurar PDF
+        const pdf = new jsPDF('p', 'pt', 'a4');
+        
+        // Convertir a imagen con html2canvas
+        const canvas = await html2canvas(pdfContainer, {
+          scale: 2,
+          useCORS: true,
+          scrollX: 0,
+          scrollY: 0,
+          windowWidth: pdfContainer.scrollWidth,
+          windowHeight: pdfContainer.scrollHeight
+        });
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.9);
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const imgWidth = pageWidth - 40; // Margen izquierdo y derecho
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        
+        // Añadir imagen al PDF
+        pdf.addImage(imgData, 'JPEG', 20, 20, imgWidth, imgHeight);
+        
+        // Guardar el PDF
+        const fechaStr = new Date().toISOString().split('T')[0];
+        pdf.save(`historial_guias_${fechaStr}.pdf`);
+      } catch (error) {
+        console.error("Error al generar PDF:", error);
+        alert("Ocurrió un error al generar el PDF. Por favor, inténtalo de nuevo.");
+      } finally {
+        // Eliminar el contenedor temporal si existe
+        const container = document.querySelector('div[style*="left: -9999px"]');
+        if (container) document.body.removeChild(container);
+      }
+    });
+
+    // Renderizar inicialmente
+    renderHistorial();
   </script>
 </body>
 </html>
