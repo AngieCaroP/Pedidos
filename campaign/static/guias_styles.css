@@ -1,0 +1,185 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+  }
+  .contenedor-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  input[type="text"], input[type="date"] {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    width: 200px;
+    font-size: 14px;
+  }
+  input[type="text"]:focus, input[type="date"]:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+  }
+  .card-dia {
+    background-color: #fff;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 15px;
+    page-break-inside: avoid;
+  }
+  .card-dia h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+    color: #333;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
+  }
+  .plataforma {
+    margin-top: 15px;
+  }
+  .plataforma h4 {
+    margin: 0 0 8px 0;
+    color: #444;
+    font-size: 1em;
+  }
+  .guia {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f9f9f9;
+    padding: 8px 12px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border-left: 4px solid #007bff;
+  }
+  .guia span {
+    flex-grow: 1;
+    margin-right: 10px;
+    word-break: break-word;
+  }
+  button.copiar {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background-color 0.2s;
+  }
+  button.copiar:hover {
+    background-color: #0069d9;
+  }
+  .acciones {
+    margin-top: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .acciones button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .exportar { 
+    background-color: #28a745; 
+    color: white; 
+  }
+  .exportar:hover {
+    background-color: #218838;
+  }
+  .exportarExcel { 
+    background-color: #17a2b8; 
+    color: white; 
+  }
+  .exportarExcel:hover {
+    background-color: #138496;
+  }
+  .exportarPdf { 
+    background-color: #6c757d; 
+    color: white; 
+  }
+  .exportarPdf:hover {
+    background-color: #5a6268;
+  }
+  .limpiar { 
+    background-color: #dc3545; 
+    color: white; 
+  }
+  .limpiar:hover {
+    background-color: #c82333;
+  }
+  .btn-volver {
+    background-color: #ffc107;
+    color: #212529;
+  }
+  .btn-volver:hover {
+    background-color: #e0a800;
+  }
+  .sin-guias {
+    text-align: center;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    color: #6c757d;
+  }
+  .pdf-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .pdf-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+  }
+  .pdf-subtitle {
+    font-size: 14px;
+    color: #666;
+  }
+  .contadores {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    background-color: #fff;
+    padding: 10px 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  .contador {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 5px;
+    min-width: 80px;
+  }
+  .contador-fb {
+    background-color: #4267B2;
+    color: white;
+  }
+  .contador-tt {
+    background-color: #FE2C55;
+    color: white;
+  }
+  .contador-valor {
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+  .contador-label {
+    font-size: 0.8em;
+  }
