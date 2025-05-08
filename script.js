@@ -403,9 +403,9 @@ function prepararCodigoGuia(plataforma) {
 }
 
 // Variable global para el contador
-let contadorGuia = 1;
 
-function actualizarSeleccion() {
+  // Declarar e inicializar el contador
+  function actualizarSeleccion() {
     const pais = document.getElementById("pais").value;
     const plataforma = document.getElementById("plataforma").value;
     const campana = document.getElementById("campana").value;
@@ -414,22 +414,19 @@ function actualizarSeleccion() {
     const idReloj = document.getElementById("idReloj").value;
     const persona = document.getElementById("persona").value;
     const numImportacion = document.getElementById("numImportacion").value;
-    
+
     if (pais && plataforma && campana && fecha && nombreSeleccionado && idReloj && persona) {
-        // Formato: COL-F005--ABO-2025-05-15-RELOJ SMARWHAT NORTH511-A-ED-44477-CP-EDC-001
-        const textoFinal = `${pais}-${plataforma}${contadorGuia.toString().padStart(3, '0')}-${campana}-${fecha}-${nombreSeleccionado}-${idReloj}-${persona}-${numImportacion}`;
+        const numero = contadores[plataforma]?.toString().padStart(3, '0') || '000';
+        const textoFinal = `${pais}-${plataforma}${numero}-${campana}-${fecha}-${nombreSeleccionado}-${idReloj}-${persona}-${numImportacion}`;
         
         document.getElementById("seleccionActual").value = textoFinal;
-        
-        // Incrementar el contador para la próxima vez
-        contadorGuia++;
-        
-        // Opcional: Guardar el contador en localStorage para persistencia
-        localStorage.setItem('contadorGuia', contadorGuia);
     } else {
         document.getElementById("seleccionActual").value = "Complete todos los campos para generar el resultado";
     }
 }
+
+
+
 
 // Al cargar la página, intentar recuperar el contador guardado
 window.addEventListener('load', function() {
