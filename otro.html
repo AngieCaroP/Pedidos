@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historial de Guías</title>
+  <link rel="stylesheet" href="guias_styles.css">
+  <script defer src="guias_script.js"></script>
+  
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+  <h1>📘 Historial de Guías</h1>
+
+  <div class="contadores">
+    <div class="contador contador-fb">
+      <div class="contador-valor" id="contador-fb">001</div>
+      <div class="contador-label">Facebook</div>
+    </div>
+    <div class="contador contador-tt">
+      <div class="contador-valor" id="contador-tt">001</div>
+      <div class="contador-label">TikTok</div>
+    </div>
+  </div>
+
+  <div class="contenedor-filtros">
+    <input type="text" id="buscarGuia" placeholder="Buscar por texto..." title="Buscar en el texto de las guías">
+    <input type="date" id="filtrarFecha" title="Filtrar por fecha específica">
+  </div>
+
+  <div id="historialGuias">
+    <!-- Tarjetas por día aparecerán aquí -->
+  </div>
+
+  <div class="acciones">
+    <button class="exportar">⬇ Exportar como TXT</button>
+    <button class="exportarExcel">⬇ Exportar como Excel</button>
+    <button class="exportarPdf">⬇ Exportar como PDF</button>
+    <button class="limpiar">🗑 Limpiar historial</button>
+    <button onclick="window.location.href='index.html'" class="btn-volver">
+      ← Volver al inicio
+    </button>
+  </div>
+
+</body>
+</html>
+
+
+
+function actualizarListaRelojes() {
+  const pais = document.getElementById("pais").value;
+  limpiarCampos();
+  if (!relojes[pais]) return;
+
+  const listaRelojes = document.getElementById("listaRelojes");
+  listaRelojes.innerHTML = "";
+
+  relojes[pais].forEach(reloj => {
+      let nombre = reloj.Nombre || reloj["Nombre del producto"];
+      if (nombre.includes("RELOJ")) {
+          let option = document.createElement("option");
+          option.value = nombre;
+          listaRelojes.appendChild(option);
+      }
+  });
+}
+
+function actualizarDatosReloj() {
+  const pais = document.getElementById("pais").value;
+  const nombreSeleccionado = document.getElementById("busquedaReloj").value;
+  const reloj = relojes[pais]?.find(r => r.Nombre === nombreSeleccionado || r["Nombre del producto"] === nombreSeleccionado);
+
+  if (reloj) {
+      document.getElementById("idReloj").value = reloj.ID || "Sin ID";
+      document.getElementById("numImportacion").value = reloj["No de importacion"] || "Sin número de importación";
+  } else {
+      document.getElementById("idReloj").value = "";
+      document.getElementById("numImportacion").value = "";
+  }
+  actualizarSeleccion();
+}
+
+// Contadores para cada plataforma
+let contadores = {
+  'F': 1, // Facebook
+  'T': 1  // TikTok
+};
+
+// Variable para guardar el código de guía actual
+let codigoGuiaActual = '';
+
+// Al cargar la página, recuperar los contadores guardados
+window.onload = function() {
+  const contadoresGuardados = localStorage.getItem('contadores');
+  if (contadoresGuardados) {
+      contadores = JSON.parse(contadoresGuardados);
+  }
+};
+
+// Función para limpiar los campos (sin tocar los de país ni plataforma)
+function limpiarCampos() {
+  document.getElementById("campana").value = "";
+  document.getElementById("fecha").value = "";
+  document.getElementById("busquedaReloj").value = "";
+  document.getElementById("idReloj").value = "";
+  document.getElementById("persona").value = "";
+  document.getElementById("numImportacion").value = "";
+  document.getElementById("seleccionActual").value = "";
+}
+
+// Inicializar contadores
+let contadores = {
+  'F': localStorage.getItem('contadorF') ? parseInt(localStorage.getItem('contadorF')) : 1,
+  'T': localStorage.getItem('contadorT') ? parseInt(localStorage.getItem('contadorT')) : 1
+};
+
+// Función para actualizar la vista
+function actualizarVista() {
+  const plataforma = document.getElementById("plataforma").value;
+  if (!plataforma) return;
+
+  const numero = contadores[plataforma].toString().padStart(3, '0');
+  document.getElementById("numeroGuia").textContent = `${plataforma}${numero}`;
+}
+
+// Al cambiar la plataforma
+document.getElementById("plataforma").addEventListener('change', function() {
+  actualizarVista();
+  actualizarSeleccion();
+});
+
+// Función principal para actualizar la selección
+function actualizarSeleccion() {
+  const pais = document.getElementById("pais").value;
+  const plataforma = document.getElementById("plataforma").value;
+  const campana = document.getElementById("campana").value;
+  const fecha = document.getElementById("fecha").value;
+  const nombreSeleccionado = document.getElementById("busquedaReloj").value;
+  const idReloj = document.getElementById("idReloj").value;
+  const persona = document.getElementById("persona").value;
+  const numImportacion = document.getElementById("numImportacion").value;
+
+  if (pais && plataforma && campana && fecha && nombreSeleccionado && idReloj && persona) {
+      const numero = contadores[plataforma].toString().padStart(3, '0');
+      const textoFinal = `${pais}-${plataforma}${numero}-${campana}-${fecha}-${nombreSeleccionado}-${idReloj}-${persona}-${numImportacion}`;
+      document.getElementById("seleccionActual").value = textoFinal;
+  } else {
+      document.getElementById("seleccionActual").value = "Complete todos los campos para generar el resultado";
+  }
+}
+
+// Función para copiar el texto
+function copiarTexto() {
+  // Validar campos
+  const camposRequeridos = ['pais', 'plataforma', 'campana', 'fecha', 'busquedaReloj', 'idReloj', 'persona', 'numImportacion'];
+  for (let id of camposRequeridos) {
+      if (!document.getElementById(id).value) {
+          alert('Por favor complete todos los campos');
+          return;
+      }
+  }
+
+  const plataforma = document.getElementById("plataforma").value;
+  const textarea = document.getElementById("seleccionActual");
+  
+  // Copiar al portapapeles
+  textarea.select();
+  document.execCommand("copy");
+
+  // Incrementar contador
+  contadores[plataforma]++;
+  
+  // Guardar en localStorage
+  localStorage.setItem('contadorF', contadores['F']);
+  localStorage.setItem('contadorT', contadores['T']);
+  
+  // Actualizar vista
+  actualizarVista();
+  actualizarSeleccion();
+  
+  alert(`Texto copiado!\nPróximo número: ${plataforma}${contadores[plataforma].toString().padStart(3, '0')}`);
+}
+
+// Inicializar al cargar
+window.addEventListener('load', function() {
+  actualizarVista();
+  document.getElementById("fecha").valueAsDate = new Date(); // Fecha actual por defecto
+});

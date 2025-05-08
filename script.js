@@ -402,7 +402,10 @@ function prepararCodigoGuia(plataforma) {
     return `${plataforma}${numero}`;
 }
 
-function actualizarSeleccion() {
+// Variable global para el contador
+
+  // Declarar e inicializar el contador
+  function actualizarSeleccion() {
     const pais = document.getElementById("pais").value;
     const plataforma = document.getElementById("plataforma").value;
     const campana = document.getElementById("campana").value;
@@ -411,14 +414,27 @@ function actualizarSeleccion() {
     const idReloj = document.getElementById("idReloj").value;
     const persona = document.getElementById("persona").value;
     const numImportacion = document.getElementById("numImportacion").value;
-    
+
     if (pais && plataforma && campana && fecha && nombreSeleccionado && idReloj && persona) {
-        const textoFinal = `${pais}-${plataforma}${codigoGuiaActual ? codigoGuiaActual + '-' : ''}-${codigoGuiaActual}-${campana}-${fecha}-${nombreSeleccionado}-${idReloj}-${persona}-${numImportacion}`;
+        const numero = contadores[plataforma]?.toString().padStart(3, '0') || '000';
+        const textoFinal = `${pais}-${plataforma}${numero}-${campana}-${fecha}-${nombreSeleccionado}-${idReloj}-${persona}-${numImportacion}`;
+        
         document.getElementById("seleccionActual").value = textoFinal;
     } else {
         document.getElementById("seleccionActual").value = "Complete todos los campos para generar el resultado";
     }
 }
+
+
+
+
+// Al cargar la página, intentar recuperar el contador guardado
+window.addEventListener('load', function() {
+    const contadorGuardado = localStorage.getItem('contadorGuia');
+    if (contadorGuardado) {
+        contadorGuia = parseInt(contadorGuardado);
+    }
+});
 
 function copiarTexto() {
     // 1. Validar que todos los campos estén llenos
