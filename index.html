@@ -3,88 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Campañas de Relojería</title>
+    <title>Consola de Campañas</title>
     <link rel="stylesheet" href="styles.css">
-    <script defer src="script.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Generador de Campañas de Relojería</h1>
+        <div class="form-section">
+            <h2>Configuración de Campañas</h2>
+            <label>País:</label>
+            <select id="pais" onchange="actualizarListaRelojes()">
+                <option value="Seleccionar">Seleccionar Ciudad</option>
+                <option value="ECU">ECU</option>
+                <option value="COL">COL</option>
+                <option value="VEN">VEN</option>
+            </select>
 
-        <div class="form-grid">
-            <div class="form-group">
-                <label>País</label>
-                <select id="pais" onchange="actualizarListaRelojes()">
-                    <option value="">Seleccionar País</option>
-                    <option value="ECU">ECU</option>
-                    <option value="COL">COL</option>
-                    <option value="VEN">VEN</option>
-                </select>
-            </div>
+            <label>Plataforma:</label>
+            <select id="plataforma" onchange="actualizarSeleccion()">
+                <option value="Seleccionar-plataforma">Seleccionar plataforma</option>
+                <option value="FACEBOOK">Facebook</option>
+                <option value="TIKTOK">TikTok</option>
+            </select>
 
-            <div class="form-group">
-                <label>Campaña</label>
-                <select id="campana" onchange="actualizarSeleccion()">
-                    <option value="">Seleccionar Campaña</option>
-                    <option value="CBO">CBO</option>
-                    <option value="ABO">ABO</option>
-                    <option value="FLEXIBLE">FLEXIBLE</option>
-                </select>
-            </div>
+            <label>Campaña:</label>
+            <select id="campana" onchange="actualizarSeleccion()">
+                <option value="CBO">CBO</option>
+                <option value="ABO">ABO</option>
+                <option value="FLEXIBLE">FLEXIBLE</option>
+            </select>
 
-            <div class="form-group">
-                <label>Fecha</label>
-                <input type="date" id="fecha" onchange="actualizarSeleccion()">
-            </div>
+            <label>Fecha:</label>
+            <input type="date" id="fecha" onchange="actualizarSeleccion()">
 
-            <div class="form-group">
-                <label>Nombre del Reloj</label>
-                <input type="text" id="busquedaReloj" list="listaRelojes" oninput="filtrarRelojes()" onchange="actualizarDatosReloj()" placeholder="Escriba o seleccione">
-                <datalist id="listaRelojes"></datalist>
-            </div>
+            <label>Nombre del Reloj:</label>
+            <input type="text" id="busquedaReloj" list="listaRelojes" oninput="filtrarRelojes()" onchange="actualizarDatosReloj()" placeholder="Escriba para buscar...">
+            <datalist id="listaRelojes"></datalist>
+            
+            <label>ID del Reloj:</label>
+            <input type="text" id="idReloj" readonly>
 
-            <div class="form-group">
-                <label>ID del Reloj</label>
-                <input type="text" id="idReloj" readonly>
-            </div>
+            <label>Persona quien lo hizo:</label>
+            <select id="persona" onchange="actualizarSeleccion()">
+                <option value="DP">DP</option>
+                <option value="CP">CP</option>
+                <option value="KO">KO</option>
+            </select>
 
-            <div class="form-group">
-                <label>Persona</label>
-                <select id="persona" onchange="actualizarSeleccion()">
-                    <option value="">Seleccionar Persona</option>
-                    <option value="DP">DP</option>
-                    <option value="CP">CP</option>
-                    <option value="KO">KO</option>
-                </select>
-            </div>
+            <label>Número de Importación:</label>
+            <input type="text" id="numImportacion" readonly>
 
-            <div class="form-group">
-                <label>Número de Importación</label>
-                <input type="text" id="numImportacion" readonly>
-            </div>
-
-            <div class="form-group">
-                <label>Plataforma</label>
-                <select id="plataforma" onchange="actualizarSeleccion()">
-                    <option value="">Seleccionar Plataforma</option>
-                    <option value="F">Facebook</option>
-                    <option value="T">TikTok</option>
-                </select>
-            </div>
-        </div>
-
-
-        <div class="resultado">
-            <label>Resultado Final:</label>
-            <div class="resultado-container">
-                <textarea id="seleccionActual" rows="3" readonly>Complete todos los campos para generar el resultado</textarea>
+            <label>Selección actual:</label>
+            <textarea id="seleccionActual" rows="3" readonly></textarea>
+            
+            <div class="button-group">
                 <button onclick="copiarTexto()">Copiar</button>
-                <button onclick="limpiarCampos()">limpiar</button>
-               
+                <button onclick="limpiarCampos()" class="btn-limpiar">Limpiar</button>
             </div>
         </div>
-      <a href="guias.html" target="_blank">Ver historial de guías generadas</a>
-          
+
+        <div class="counter-section">
+            <h2>Historial de Guias Generadas</h2>
+            <div class="history-display" id="historialDisplay">
+                <div class="history-header">Últimas Guias generadas:</div>
+              
+            </div>
+        </div>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

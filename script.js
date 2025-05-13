@@ -343,13 +343,69 @@ let relojes = {
     ]
 };
 
+// Variables globales
+let contadores = {
+    "FACEBOOK": {},
+    "TIKTOK": {}
+};
+let historial = [];
+
+// Inicializar contadores y cargar historial
+function inicializarContadores() {
+    const paises = ["ECU", "COL", "VEN"];
+    paises.forEach(pais => {
+        // Inicializar contador Facebook
+        if (!localStorage.getItem(`fb_${pais}_counter`)) {
+            localStorage.setItem(`fb_${pais}_counter`, "1");
+        }
+        contadores.FACEBOOK[pais] = parseInt(localStorage.getItem(`fb_${pais}_counter`)) || 1;
+        
+        // Inicializar contador TikTok
+        if (!localStorage.getItem(`tt_${pais}_counter`)) {
+            localStorage.setItem(`tt_${pais}_counter`, "1");
+        }
+        contadores.TIKTOK[pais] = parseInt(localStorage.getItem(`tt_${pais}_counter`)) || 1;
+    });
+    
+    // Cargar historial desde localStorage
+    const historialGuardado = localStorage.getItem('historialGUIs');
+    if (historialGuardado) {
+        historial = JSON.parse(historialGuardado);
+        mostrarHistorial();
+    }
+}
+
+
+// Mostrar historial en pantalla
+function mostrarHistorial() {
+    const display = document.getElementById("historialDisplay");
+    display.innerHTML = '<div class="history-header">Últimas GUIs generadas:</div>';
+    
+    if (historial.length === 0) {
+        display.innerHTML += '<div class="history-item">No hay historial aún</div>';
+        return;
+    }
+    
+    historial.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "history-item";
+        div.textContent = `${index + 1}. ${item}`;
+        display.appendChild(div);
+    });
+}
+
+// Actualizar lista de relojes según país seleccionado
 function actualizarListaRelojes() {
     const pais = document.getElementById("pais").value;
-    limpiarCampos();
-    if (!relojes[pais]) return;
-
+    if (pais === "Seleccionar") {
+        limpiarCampos();
+        return;
+    }
+    
     const listaRelojes = document.getElementById("listaRelojes");
     listaRelojes.innerHTML = "";
+
+    if (!relojes[pais]) return;
 
     relojes[pais].forEach(reloj => {
         let nombre = reloj.Nombre || reloj["Nombre del producto"];
@@ -359,11 +415,17 @@ function actualizarListaRelojes() {
             listaRelojes.appendChild(option);
         }
     });
+    
+    actualizarSeleccion();
 }
 
+// Actualizar datos del reloj seleccionado
 function actualizarDatosReloj() {
     const pais = document.getElementById("pais").value;
     const nombreSeleccionado = document.getElementById("busquedaReloj").value;
+    
+    if (pais === "Seleccionar" || !nombreSeleccionado) return;
+    
     const reloj = relojes[pais]?.find(r => r.Nombre === nombreSeleccionado || r["Nombre del producto"] === nombreSeleccionado);
 
     if (reloj) {
@@ -376,105 +438,10 @@ function actualizarDatosReloj() {
     actualizarSeleccion();
 }
 
-// Contadores para cada plataforma
-let contadores = {
-    'F': 1, // Facebook
-    'T': 1  // TikTok
-};
-
-// Variable para guardar el código de guía actual
-let codigoGuiaActual = '';
-
-// Al cargar la página, recuperar los contadores guardados
-window.onload = function() {
-    const contadoresGuardados = localStorage.getItem('contadores');
-    if (contadoresGuardados) {
-        contadores = JSON.parse(contadoresGuardados);
-    }
-};
-
-// Función para generar el código de guía (sin incrementar aún)
-function prepararCodigoGuia(plataforma) {
-    if (!plataforma) return '';
-    
-    // Obtener el contador actual y formatearlo a 3 dígitos
-    const numero = contadores[plataforma].toString().padStart(3, '0');
-    return `${plataforma}${numero}`;
-}
-
-// Variable global para el contador
-
-  // Declarar e inicializar el contador
-  function actualizarSeleccion() {
-    const pais = document.getElementById("pais").value;
-    const plataforma = document.getElementById("plataforma").value;
-    const campana = document.getElementById("campana").value;
-    const fecha = document.getElementById("fecha").value;
-    const nombreSeleccionado = document.getElementById("busquedaReloj").value;
-    const idReloj = document.getElementById("idReloj").value;
-    const persona = document.getElementById("persona").value;
-    const numImportacion = document.getElementById("numImportacion").value;
-
-    if (pais && plataforma && campana && fecha && nombreSeleccionado && idReloj && persona) {
-        const numero = contadores[plataforma]?.toString().padStart(3, '0') || '000';
-        const textoFinal = `${pais}-${plataforma}${numero}-${campana}-${fecha}-${nombreSeleccionado}-${idReloj}-${persona}-${numImportacion}`;
-        
-        document.getElementById("seleccionActual").value = textoFinal;
-    } else {
-        document.getElementById("seleccionActual").value = "Complete todos los campos para generar el resultado";
-    }
-}
-
-
-
-
-// Al cargar la página, intentar recuperar el contador guardado
-window.addEventListener('load', function() {
-    const contadorGuardado = localStorage.getItem('contadorGuia');
-    if (contadorGuardado) {
-        contadorGuia = parseInt(contadorGuardado);
-    }
-});
-
-function copiarTexto() {
-    // 1. Validar que todos los campos estén llenos
-    const camposRequeridos = [
-        'pais', 'campana', 'fecha', 'busquedaReloj',
-        'idReloj', 'persona', 'numImportacion', 'plataforma'
-    ];
-    
-    for (let id of camposRequeridos) {
-        const el = document.getElementById(id);
-        if (!el || !el.value.trim()) {
-            alert('Por favor completa todos los campos antes de copiar.');
-            return; // detiene la función si falta algo
-        }
-    }
-
-    // 2. Copiar al portapapeles
-    const textarea = document.getElementById("seleccionActual");
-    textarea.select();
-    document.execCommand("copy");
-
-    // 3. Guardar historial
-    const textoFinal = textarea.value;
-    const guias = JSON.parse(localStorage.getItem('guiasGeneradas')) || [];
-    const hoy = new Date().toISOString().split('T')[0];
-    guias.push({ fecha: hoy, texto: textoFinal });
-    localStorage.setItem('guiasGeneradas', JSON.stringify(guias));
-
-    // 4. Incrementar contador
-    const plataforma = document.getElementById("plataforma").value;
-    if (plataforma && codigoGuiaActual) {
-        contadores[plataforma]++;
-        localStorage.setItem('contadores', JSON.stringify(contadores));
-        codigoGuiaActual = '';
-    }
-
-    alert("Texto copiado y guardado correctamente.");
-}
-
+// Limpiar todos los campos
 function limpiarCampos() {
+    document.getElementById("pais").value = "Seleccionar";
+    document.getElementById("plataforma").value = "Seleccionar-plataforma";
     document.getElementById("campana").value = "";
     document.getElementById("fecha").value = "";
     document.getElementById("busquedaReloj").value = "";
@@ -482,5 +449,92 @@ function limpiarCampos() {
     document.getElementById("persona").value = "";
     document.getElementById("numImportacion").value = "";
     document.getElementById("seleccionActual").value = "";
-    // No limpiamos país ni plataforma para mantener la configuración
+    
+    document.getElementById("listaRelojes").innerHTML = "";
 }
+
+// Actualizar la selección mostrada
+function actualizarSeleccion() {
+    const pais = document.getElementById("pais").value;
+    const plataforma = document.getElementById("plataforma").value;
+    
+    // Validar selecciones requeridas
+    if (pais === "Seleccionar" || plataforma === "Seleccionar-plataforma") {
+        document.getElementById("seleccionActual").value = "Seleccione ciudad y plataforma";
+        return;
+    }
+    
+    const campana = document.getElementById("campana").value;
+    const fecha = document.getElementById("fecha").value;
+    const nombreSeleccionado = document.getElementById("busquedaReloj").value;
+    const idReloj = document.getElementById("idReloj").value;
+    const persona = document.getElementById("persona").value;
+    const numImportacion = document.getElementById("numImportacion").value;
+    
+    let prefijo = plataforma === 'FACEBOOK' ? 'F' : 'T';
+    const numero = contadores[plataforma][pais].toString().padStart(3, '0');
+    
+    const textoFinal = `${pais}-${prefijo}${numero}-${campana}-${fecha}-${nombreSeleccionado}-${idReloj}-${persona}-${numImportacion}`;
+    document.getElementById("seleccionActual").value = textoFinal;
+}
+
+// Copiar texto al portapapeles e incrementar contador
+function copiarTexto() {
+    const pais = document.getElementById("pais").value;
+    const plataforma = document.getElementById("plataforma").value;
+    
+    // Validar selecciones requeridas
+    if (pais === "Seleccionar" || plataforma === "Seleccionar-plataforma") {
+        alert("Por favor seleccione ciudad y plataforma");
+        return;
+    }
+    
+    // Validar que los contadores estén inicializados
+    if (isNaN(contadores[plataforma][pais])) {
+        contadores[plataforma][pais] = 1;
+        localStorage.setItem(`${plataforma.toLowerCase()}_${pais}_counter`, "1");
+    }
+    
+    const campana = document.getElementById("campana").value;
+    const fecha = document.getElementById("fecha").value;
+    const nombreSeleccionado = document.getElementById("busquedaReloj").value;
+    const idReloj = document.getElementById("idReloj").value;
+    const persona = document.getElementById("persona").value;
+    const numImportacion = document.getElementById("numImportacion").value;
+    
+    let prefijo = plataforma === 'FACEBOOK' ? 'F' : 'T';
+    const numero = obtenerYIncrementarContador(pais, plataforma);
+    
+    const textoFinal = `${pais}-${prefijo}${numero.toString().padStart(3, '0')}-${campana}-${fecha}-${nombreSeleccionado}-${idReloj}-${persona}-${numImportacion}`;
+    
+    // Actualizar interfaz
+    document.getElementById("seleccionActual").value = textoFinal;
+    document.getElementById("seleccionActual").select();
+    document.execCommand("copy");
+    
+    // Agregar al historial y guardar
+    historial.unshift(textoFinal);
+    if (historial.length > 20) historial.pop();
+    localStorage.setItem('historialGUIs', JSON.stringify(historial));
+    mostrarHistorial();
+    
+    alert("GUI copiada al portapeles. Contador incrementado.");
+}
+
+// Obtener y aumentar contador (solo se llama al copiar)
+function obtenerYIncrementarContador(pais, plataforma) {
+    const plataformaKey = plataforma === 'FACEBOOK' ? 'FACEBOOK' : 'TIKTOK';
+    const numeroActual = contadores[plataformaKey][pais];
+    
+    // Incrementar y guardar
+    contadores[plataformaKey][pais]++;
+    localStorage.setItem(`${plataformaKey.toLowerCase()}_${pais}_counter`, contadores[plataformaKey][pais]);
+    
+    return numeroActual.toString().padStart(3, '0');
+}
+
+// Inicializar al cargar la página
+window.onload = function() {
+    inicializarContadores();
+    actualizarListaRelojes();
+};
