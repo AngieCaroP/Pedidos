@@ -36,7 +36,7 @@
             <input type="date" id="fecha" onchange="actualizarSeleccion()">
 
             <label>Nombre del Reloj:</label>
-            <input type="text" id="busquedaReloj" list="listaRelojes" oninput="filtrarRelojes()" onchange="actualizarDatosReloj()" placeholder="Escriba para buscar...">
+            <input type="text" id="busquedaReloj" list="listaRelojes" oninput="actualizarDatosReloj()" onchange="actualizarDatosReloj()" placeholder="Escriba para buscar..."> <!-- Cambiado oninput a actualizarDatosReloj para consistencia -->
             <datalist id="listaRelojes"></datalist>
             
             <label>ID del Reloj:</label>
@@ -55,21 +55,18 @@
             <label>Selección actual:</label>
             <textarea id="seleccionActual" rows="3" readonly></textarea>
             
-            <div class="button-group">
-                <button onclick="copiarTexto()">Copiar</button>
-                <button onclick="limpiarCampos()" class="btn-limpiar">Limpiar</button>
+            <!-- Botones de acción movidos aquí dentro del form-section o justo después -->
+            <div style="margin-top: 20px; padding-top:15px; border-top: 1px solid #eee;">
+              <button onclick="copiarTexto()">Copiar</button>
+              <button onclick="limpiarCampos()">Limpiar</button> <!-- Asumiendo que tienes limpiarCampos en script.js -->
+              <button onclick="guardarCampaña()">Guardar Campaña y Avanzar Contador</button>
+              <button onclick="irACampañasGuardadas()">Campañas guardadas</button> <!-- Botón modificado -->
             </div>
         </div>
 
         <div class="counter-section">
-            <h2>Historial de Guias Generadas</h2>
-            <div class="history-display" id="historialDisplay">
-                <div class="history-header">Últimas Guias generadas:</div>
-              
-            </div>
-        </div>
-    </div>
-
+            
+           
     <script src="script.js"></script>
 </body>
 </html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campañas Guardadas</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 900px;
+            margin: auto;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .filters {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        .filters h2 {
+            margin-top: 0;
+            font-size: 1.2em;
+            color: #555;
+        }
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .filter-grid label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .filter-grid input,
+        .filter-grid select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .filter-buttons {
+            text-align: right;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #e9e9e9;
+            margin-bottom: 8px;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            word-break: break-all;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        li:nth-child(odd) {
+            background-color: #fdfdfd;
+        }
+        button {
+            padding: 10px 15px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-left: 5px;
+        }
+        .btn-primary { background-color: #007bff; }
+        .btn-primary:hover { background-color: #0056b3; }
+        .btn-secondary { background-color: #6c757d; }
+        .btn-secondary:hover { background-color: #545b62; }
+        .btn-danger { background-color: #dc3545; }
+        .btn-danger:hover { background-color: #c82333; }
+        .btn-warning { background-color: #ffc107; color: #212529; }
+        .btn-warning:hover { background-color: #e0a800; }
+
+        .no-campaigns {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="controls">
+            <button id="btnRegresar" class="btn-secondary">Regresar</button>
+            <h1>Lista de Campañas Guardadas</h1>
+            <button id="limpiarCampañasBtn" class="btn-danger">Limpiar Todas</button>
+        </div>
+
+        <div class="filters">
+            <h2>Filtrar Campañas</h2>
+            <div class="filter-grid">
+                <div>
+                    <label for="filtroPais">País:</label>
+                    <input type="text" id="filtroPais" placeholder="Ej: ECU">
+                </div>
+                <div>
+                    <label for="filtroPlataforma">Plataforma:</label>
+                    <select id="filtroPlataforma">
+                        <option value="">Todas</option>
+                        <option value="F">Facebook (F)</option>
+                        <option value="T">TikTok (T)</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="filtroTipoCampana">Tipo Campaña:</label>
+                    <input type="text" id="filtroTipoCampana" placeholder="Ej: CBO">
+                </div>
+                <div>
+                    <label for="filtroFecha">Fecha (del GUI):</label>
+                    <input type="date" id="filtroFecha">
+                </div>
+                <div>
+                    <label for="filtroNombreReloj">Nombre Reloj:</label>
+                    <input type="text" id="filtroNombreReloj" placeholder="Parte del nombre">
+                </div>
+                <div>
+                    <label for="filtroIdReloj">ID Reloj:</label>
+                    <input type="text" id="filtroIdReloj" placeholder="Ej: 12345">
+                </div>
+                <div>
+                    <label for="filtroPersona">Persona:</label>
+                    <input type="text" id="filtroPersona" placeholder="Ej: DP">
+                </div>
+                <div>
+                    <label for="filtroNumImportacion">No. Importación:</label>
+                    <input type="text" id="filtroNumImportacion" placeholder="Ej: DC">
+                </div>
+            </div>
+            <div class="filter-buttons">
+                <button id="btnAplicarFiltros" class="btn-primary">Aplicar Filtros</button>
+                <button id="btnLimpiarFiltros" class="btn-warning">Limpiar Filtros</button>
+            </div>
+        </div>
+
+        <ul id="listaCampañasGuardadas">
+            <!-- Las campañas se cargarán aquí por JavaScript -->
+        </ul>
+    </div>
+
+    <script>
+        let todasLasCampañas = []; // Para mantener una copia de todas las campañas originales
+
+        window.onload = function() {
+            cargarCampañasGuardadas();
+            document.getElementById('limpiarCampañasBtn').addEventListener('click', confirmarLimpiarTodasLasCampañas);
+            
+            // ESTA ES LA LÍNEA CRÍTICA PARA EL BOTÓN REGRESAR:
+            // Se asigna la función 'regresar' como manejador del evento 'click', SIN ejecutarla inmediatamente.
+            document.getElementById('btnRegresar').addEventListener('click', regresar); 
+            
+            document.getElementById('btnAplicarFiltros').addEventListener('click', aplicarFiltros);
+            document.getElementById('btnLimpiarFiltros').addEventListener('click', limpiarCamposDeFiltro);
+
+            // Opcional: aplicar filtros al presionar Enter en los campos de texto o cambiar select/date
+            const filterInputs = document.querySelectorAll('.filter-grid input[type="text"], .filter-grid input[type="date"], .filter-grid select');
+            filterInputs.forEach(input => {
+                input.addEventListener('keypress', function(event) {
+                    if (event.key === 'Enter') {
+                        aplicarFiltros();
+                    }
+                });
+                if (input.tagName === 'SELECT' || input.type === 'date') {
+                     input.addEventListener('change', aplicarFiltros);
+                }
+            });
+        };
+
+        function regresar() {
+            console.log("Botón Regresar presionado. Redirigiendo..."); // Para depuración
+            // Cambia 'index.html' por el nombre real de tu página principal de generación de GUIs si es diferente.
+            window.location.href = 'index.html'; 
+        }
+
+        function parseGuiString(guiString) {
+            if (!guiString || typeof guiString !== 'string') return null;
+            const parts = guiString.split('-');
+            // Se espera una estructura específica. Ajustar el mínimo si es necesario.
+            // Pais-PlatCont-Tipo-Fecha-NombreReloj(puede tener guiones)-IdReloj-Persona-NoImport
+            // Por lo tanto, al menos 8 partes si el nombre del reloj es una sola palabra.
+            if (parts.length < 8) { 
+                console.warn("Cadena GUI no tiene suficientes partes para parsear:", guiString);
+                return null;
+            }
+
+            const pais = parts[0];
+            const plataformaContador = parts[1];
+            const plataforma = plataformaContador ? plataformaContador.charAt(0) : '';
+            // const contador = plataformaContador ? plataformaContador.substring(1) : ''; // No se usa directamente en filtros
+            const tipoCampana = parts[2];
+            const fecha = parts[3]; // Se espera YYYY-MM-DD
+
+            // Los últimos 3 segmentos son fijos: IdReloj, Persona, NoImport
+            const numImportacion = parts[parts.length - 1];
+            const persona = parts[parts.length - 2];
+            const idReloj = parts[parts.length - 3];
+            
+            // Nombre del reloj es lo que está entre la fecha (índice 3) y los últimos 3 segmentos.
+            // El slice va desde el índice 4 hasta (longitud total - 3)
+            const nombreReloj = parts.slice(4, parts.length - 3).join('-');
+
+            return {
+                raw: guiString,
+                pais,
+                plataforma,
+                // contador, // Descomentar si necesitas filtrar por contador
+                tipoCampana,
+                fecha,
+                nombreReloj,
+                idReloj,
+                persona,
+                numImportacion
+            };
+        }
+
+        function cargarCampañasGuardadas() {
+            const campañasGuardadasRaw = JSON.parse(localStorage.getItem('campañasGuardadas') || '[]');
+            todasLasCampañas = campañasGuardadasRaw.map(parseGuiString).filter(Boolean); // Parsear y quitar nulos
+            renderCampañas(todasLasCampañas);
+        }
+
+        function renderCampañas(campañas) {
+            const listaUl = document.getElementById('listaCampañasGuardadas');
+            listaUl.innerHTML = ''; 
+
+            if (campañas.length === 0) {
+                const pInfo = document.createElement('p');
+                pInfo.className = 'no-campaigns';
+                pInfo.textContent = 'No hay campañas que coincidan con los filtros o no hay campañas guardadas.';
+                listaUl.appendChild(pInfo);
+            } else {
+                campañas.forEach(campañaObj => {
+                    if (!campañaObj || !campañaObj.raw) return; // Chequeo de seguridad
+                    const li = document.createElement('li');
+                    li.textContent = campañaObj.raw;
+                    listaUl.appendChild(li);
+                });
+            }
+        }
+        
+        function aplicarFiltros() {
+            const filtroPaisVal = document.getElementById('filtroPais').value.trim().toLowerCase();
+            const filtroPlataformaVal = document.getElementById('filtroPlataforma').value; // Ya es 'F' o 'T'
+            const filtroTipoCampanaVal = document.getElementById('filtroTipoCampana').value.trim().toLowerCase();
+            const filtroFechaVal = document.getElementById('filtroFecha').value; // Formato YYYY-MM-DD
+            const filtroNombreRelojVal = document.getElementById('filtroNombreReloj').value.trim().toLowerCase();
+            const filtroIdRelojVal = document.getElementById('filtroIdReloj').value.trim().toLowerCase();
+            const filtroPersonaVal = document.getElementById('filtroPersona').value.trim().toLowerCase();
+            const filtroNumImportacionVal = document.getElementById('filtroNumImportacion').value.trim().toLowerCase();
+
+            const campañasFiltradas = todasLasCampañas.filter(campaña => {
+                if (!campaña) return false; // Seguridad
+
+                const paisMatch = !filtroPaisVal || (campaña.pais && campaña.pais.toLowerCase().includes(filtroPaisVal));
+                const plataformaMatch = !filtroPlataformaVal || (campaña.plataforma && campaña.plataforma === filtroPlataformaVal);
+                const tipoCampanaMatch = !filtroTipoCampanaVal || (campaña.tipoCampana && campaña.tipoCampana.toLowerCase().includes(filtroTipoCampanaVal));
+                const fechaMatch = !filtroFechaVal || (campaña.fecha && campaña.fecha === filtroFechaVal);
+                const nombreRelojMatch = !filtroNombreRelojVal || (campaña.nombreReloj && campaña.nombreReloj.toLowerCase().includes(filtroNombreRelojVal));
+                const idRelojMatch = !filtroIdRelojVal || (campaña.idReloj && campaña.idReloj.toLowerCase().includes(filtroIdRelojVal));
+                const personaMatch = !filtroPersonaVal || (campaña.persona && campaña.persona.toLowerCase().includes(filtroPersonaVal));
+                const numImportacionMatch = !filtroNumImportacionVal || (campaña.numImportacion && campaña.numImportacion.toLowerCase().includes(filtroNumImportacionVal));
+                
+                return paisMatch && plataformaMatch && tipoCampanaMatch && fechaMatch && nombreRelojMatch && idRelojMatch && personaMatch && numImportacionMatch;
+            });
+
+            renderCampañas(campañasFiltradas);
+        }
+
+        function limpiarCamposDeFiltro() {
+            document.getElementById('filtroPais').value = '';
+            document.getElementById('filtroPlataforma').value = '';
+            document.getElementById('filtroTipoCampana').value = '';
+            document.getElementById('filtroFecha').value = '';
+            document.getElementById('filtroNombreReloj').value = '';
+            document.getElementById('filtroIdReloj').value = '';
+            document.getElementById('filtroPersona').value = '';
+            document.getElementById('filtroNumImportacion').value = '';
+            
+            renderCampañas(todasLasCampañas); // Mostrar todas las campañas de nuevo
+        }
+
+        function confirmarLimpiarTodasLasCampañas() {
+            if (confirm("¿Estás seguro de que quieres borrar TODAS las campañas guardadas? Esta acción no se puede deshacer.")) {
+                localStorage.removeItem('campañasGuardadas');
+                todasLasCampañas = []; // Limpiar la copia en memoria también
+                renderCampañas([]); // Recargar la lista (que ahora estará vacía)
+                alert("Todas las campañas guardadas han sido eliminadas.");
+            }
+        }
+    </script>
+</body>
+</html>

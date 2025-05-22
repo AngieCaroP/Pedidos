@@ -140,7 +140,7 @@ let relojes = {
         {"ID":"42943","Nombre":"RELOJ G-SHOCK CASIO NEGRO HUMO-A-D","No de importacion":"DC"},
         {"ID":"41782","Nombre":"ARETES ROSA PURPURA-A-K","No de importacion":"KC"},
         {"ID":"41781","Nombre":"COLLAR SISNEY-A-K","No de importacion":"KC"},
-        {"ID":"41414","Nombre":"ARETES MARIPOSA ESMERALDA-A-K","No de importacion":"KC"},
+        {"ID":"41414","Nombre":"AREtes MARIPOSA ESMERALDA-A-K","No de importacion":"KC"},
         {"ID":"41098","Nombre":"TQUARTZ 9146 AZUL-A-D","No de importacion":"DC"},
         {"ID":"41097","Nombre":"RELOJ SMARTWATCH ULTRA NEGRO-A-D","No de importacion":"DC"},
         {"ID":"40874","Nombre":"RELOJ SANDA 6008 NEGR0-A-E","No de importacion":"EC"},
@@ -148,7 +148,7 @@ let relojes = {
         {"ID":"40824","Nombre":"RELOJ G-SHOCK OAK NEGRO DORADO-A-D","No de importacion":"DC"},
         {"ID":"40823","Nombre":"RELOJ G-SHOCK OAK NARANJA-A-D","No de importacion":"DC"},
         {"ID":"40225","Nombre":"RELOJ GSHOCK PROTREK NEGRO-A-D","No de importacion":"DC"},
-        {"ID":"40095","Nombre":"TQUARTZ NF9197 PLATA FONDO AZUL-A-KM","No de importacion":"KMC"},
+        {"ID":"40095","Nombre":"TQUARTZ NF9197 PLATA FONDO AZUL-A-KM","No de importacion":"KMC"},
         {"ID":"40090","Nombre":"CURREN 8329 NEGRO-A-E","No de importacion":"EC"},
         {"ID":"40027","Nombre":"COMBO 2 RELOJES","No de importacion":"DC"},
         {"ID":"39947","Nombre":"RELOJ GSHOCK OAK METAL PLATA-A-D","No de importacion":"DC"},
@@ -333,48 +333,48 @@ let relojes = {
         {"ID":"6571","Nombre del producto":"RELOJ WLISTH 6144-A","No de importacion":"KM"},
     ],
     "VEN": [
-        { "ID": 2497, "Nombre del producto": "RELOJ SANDA 739 NEGRO", "No de importacion": "DE" },
-        { "ID": 44376, "Nombre del producto": "RELOJ SANDA 3002 NEGRO-A-E", "No de importacion": "EC" },
-        { "ID": 2497, "Nombre del producto": "RELOJ SANDA 739 NEGRO","No de importacion": "DE"},
-        { "ID": 44376,"Nombre del producto": "RELOJ SANDA 3002 NEGRO-A-E", "No de importacion": "EC"},
-        { "ID": 46726, "Nombre del producto": "RELOJ G-SHOCK OAK NEGRO RESINA-A-D", "No de importacion": "DC"},
-        { "ID": 46908,"Nombre del producto": "CASIO VINTAJE PLATEADO-B-A-ED","No de importacion": "EDC"},
-        { "ID": 2973,"Nombre del producto":"TRATAMIENTO GOTAS RESCATE","No de importacion":"KV"},
+        { "ID": "2497", "Nombre del producto": "RELOJ SANDA 739 NEGRO", "No de importacion": "DE" },
+        { "ID": "44376", "Nombre del producto": "RELOJ SANDA 3002 NEGRO-A-E", "No de importacion": "EC" },
+        { "ID": "2497", "Nombre del producto": "RELOJ SANDA 739 NEGRO","No de importacion": "DE"},
+        { "ID": "44376","Nombre del producto": "RELOJ SANDA 3002 NEGRO-A-E", "No de importacion": "EC"},
+        { "ID": "46726", "Nombre del producto": "RELOJ G-SHOCK OAK NEGRO RESINA-A-D", "No de importacion": "DC"},
+        { "ID": "46908","Nombre del producto": "CASIO VINTAJE PLATEADO-B-A-ED","No de importacion": "EDC"},
+        { "ID": "2973","Nombre del producto":"TRATAMIENTO GOTAS RESCATE","No de importacion":"KV"},
     ]
 };
-
+""
 // Variables globales
 let contadores = {
     "FACEBOOK": {},
     "TIKTOK": {}
 };
-let historial = [];
+let historial = []; // Historial de GUIs generadas y guardadas/copiadas
 
 // Inicializar contadores y cargar historial
 function inicializarContadores() {
     const paises = ["ECU", "COL", "VEN"];
     paises.forEach(pais => {
-        // Inicializar contador Facebook
-        if (!localStorage.getItem(`fb_${pais}_counter`)) {
-            localStorage.setItem(`fb_${pais}_counter`, "1");
-        }
-        contadores.FACEBOOK[pais] = parseInt(localStorage.getItem(`fb_${pais}_counter`)) || 1;
-        
-        // Inicializar contador TikTok
-        if (!localStorage.getItem(`tt_${pais}_counter`)) {
-            localStorage.setItem(`tt_${pais}_counter`, "1");
-        }
-        contadores.TIKTOK[pais] = parseInt(localStorage.getItem(`tt_${pais}_counter`)) || 1;
+        ["FACEBOOK", "TIKTOK"].forEach(plataforma => {
+            const localStorageKey = `${plataforma.toLowerCase()}_${pais}_counter`;
+            let valorGuardado = localStorage.getItem(localStorageKey);
+
+            if (!contadores[plataforma]) {
+                contadores[plataforma] = {};
+            }
+            contadores[plataforma][pais] = (valorGuardado === null) ? 1 : (parseInt(valorGuardado) || 1);
+            
+            if (valorGuardado === null) { 
+                localStorage.setItem(localStorageKey, "1");
+            }
+        });
     });
     
-    // Cargar historial desde localStorage
     const historialGuardado = localStorage.getItem('historialGUIs');
     if (historialGuardado) {
         historial = JSON.parse(historialGuardado);
         mostrarHistorial();
     }
 }
-
 
 // Mostrar historial en pantalla
 function mostrarHistorial() {
@@ -386,10 +386,12 @@ function mostrarHistorial() {
         return;
     }
     
-    historial.forEach((item, index) => {
-        const div = document.createElement("div");
+    const historialAMostrar = historial.slice(0, 20); // Mostrar solo los últimos 20
+
+    historialAMostrar.forEach(item => {
+        const div = document.createElement("div"); 
         div.className = "history-item";
-        div.textContent = `${index + 1}. ${item}`;
+        div.textContent = item; 
         display.appendChild(div);
     });
 }
@@ -397,144 +399,210 @@ function mostrarHistorial() {
 // Actualizar lista de relojes según país seleccionado
 function actualizarListaRelojes() {
     const pais = document.getElementById("pais").value;
+    const listaRelojes = document.getElementById("listaRelojes");
+    listaRelojes.innerHTML = ""; 
+
     if (pais === "Seleccionar") {
-        limpiarCampos();
+        limpiarCampos(); // limpiarCampos ya llama a actualizarSeleccion
         return;
     }
     
-    const listaRelojes = document.getElementById("listaRelojes");
-    listaRelojes.innerHTML = "";
-
-    if (!relojes[pais]) return;
-
-    relojes[pais].forEach(reloj => {
-        let nombre = reloj.Nombre || reloj["Nombre del producto"];
-        if (nombre.includes("RELOJ")) {
-            let option = document.createElement("option");
-            option.value = nombre;
-            listaRelojes.appendChild(option);
-        }
-    });
-    
-    actualizarSeleccion();
+    if (relojes[pais]) {
+        relojes[pais].forEach(reloj => {
+            let nombre = reloj.Nombre || reloj["Nombre del producto"];
+            if (nombre && nombre.toUpperCase().includes("RELOJ")) {
+                let option = document.createElement("option");
+                option.value = nombre;
+                listaRelojes.appendChild(option);
+            }
+        });
+    }
+    actualizarSeleccion(); // Actualizar el GUI con el contador actual
 }
 
 // Actualizar datos del reloj seleccionado
 function actualizarDatosReloj() {
     const pais = document.getElementById("pais").value;
-    const nombreSeleccionado = document.getElementById("busquedaReloj").value;
-    
-    if (pais === "Seleccionar" || !nombreSeleccionado) return;
-    
-    const reloj = relojes[pais]?.find(r => r.Nombre === nombreSeleccionado || r["Nombre del producto"] === nombreSeleccionado);
+    const nombreSeleccionado = document.getElementById("busquedaReloj").value; 
+    const idRelojInput = document.getElementById("idReloj");
+    const numImportacionInput = document.getElementById("numImportacion");
 
-    if (reloj) {
-        document.getElementById("idReloj").value = reloj.ID || "Sin ID";
-        document.getElementById("numImportacion").value = reloj["No de importacion"] || "Sin número de importación";
-    } else {
-        document.getElementById("idReloj").value = "";
-        document.getElementById("numImportacion").value = "";
+    idRelojInput.value = "";
+    numImportacionInput.value = "";
+
+    if (pais !== "Seleccionar" && nombreSeleccionado && relojes[pais]) {
+        const relojEncontrado = relojes[pais].find(r => {
+            const nombreProducto = r.Nombre || r["Nombre del producto"];
+            return nombreProducto === nombreSeleccionado;
+        });
+
+        if (relojEncontrado) {
+            idRelojInput.value = relojEncontrado.ID || "Sin ID";
+            numImportacionInput.value = relojEncontrado["No de importacion"] || "Sin No. Importación";
+        }
     }
-    actualizarSeleccion();
+    actualizarSeleccion(); // Actualizar el GUI con el contador y nuevos datos
 }
 
-// Limpiar todos los campos
+
+// Limpiar todos los campos del formulario
 function limpiarCampos() {
     document.getElementById("pais").value = "Seleccionar";
     document.getElementById("plataforma").value = "Seleccionar-plataforma";
-    document.getElementById("campana").value = "";
+    document.getElementById("campana").value = "CBO"; // Valor por defecto
     document.getElementById("fecha").value = "";
     document.getElementById("busquedaReloj").value = "";
     document.getElementById("idReloj").value = "";
-    document.getElementById("persona").value = "";
+    document.getElementById("persona").value = "DP"; // Valor por defecto
     document.getElementById("numImportacion").value = "";
-    document.getElementById("seleccionActual").value = "";
-    
-    document.getElementById("listaRelojes").innerHTML = "";
+    actualizarSeleccion(); 
 }
 
-// Actualizar la selección mostrada
+// Actualizar la selección mostrada en el textarea
 function actualizarSeleccion() {
     const pais = document.getElementById("pais").value;
     const plataforma = document.getElementById("plataforma").value;
+    const seleccionActualTextarea = document.getElementById("seleccionActual");
     
-    // Validar selecciones requeridas
     if (pais === "Seleccionar" || plataforma === "Seleccionar-plataforma") {
-        document.getElementById("seleccionActual").value = "Seleccione ciudad y plataforma";
+        seleccionActualTextarea.value = "Seleccione país y plataforma";
         return;
     }
     
     const campana = document.getElementById("campana").value;
-    const fecha = document.getElementById("fecha").value;
+    const fechaInput = document.getElementById("fecha").value; 
+    let fechaFormateada = "";
+    if (fechaInput) { 
+        // Añadir 'T00:00:00' para asegurar que se interprete como fecha local y no UTC.
+        const fechaObj = new Date(fechaInput + 'T00:00:00'); 
+        const year = fechaObj.getFullYear();
+        const month = (fechaObj.getMonth() + 1).toString().padStart(2, '0'); // Meses son 0-indexados
+        const day = fechaObj.getDate().toString().padStart(2, '0');
+        fechaFormateada = `${year}-${month}-${day}`;
+    }
+
     const nombreSeleccionado = document.getElementById("busquedaReloj").value;
     const idReloj = document.getElementById("idReloj").value;
     const persona = document.getElementById("persona").value;
     const numImportacion = document.getElementById("numImportacion").value;
     
-    let prefijo = plataforma === 'FACEBOOK' ? 'F' : 'T';
-    const numero = contadores[plataforma][pais].toString().padStart(3, '0');
+    let prefijoPlataforma = plataforma === 'FACEBOOK' ? 'F' : 'T';
     
-    const textoFinal = `${pais}-${prefijo}${numero}-${campana}-${fecha}-${nombreSeleccionado}-${idReloj}-${persona}-${numImportacion}`;
-    document.getElementById("seleccionActual").value = textoFinal;
+    let proximoNumeroContador = "1"; 
+    const plataformaKey = plataforma; 
+    if (contadores[plataformaKey] && contadores[plataformaKey][pais] !== undefined) {
+        proximoNumeroContador = contadores[plataformaKey][pais].toString();
+    }
+    
+    const textoFinal = `${pais}-${prefijoPlataforma}${proximoNumeroContador}-${campana}-${fechaFormateada}-${nombreSeleccionado}-${idReloj}-${persona}-${numImportacion}`;
+    seleccionActualTextarea.value = textoFinal;
 }
 
-// Copiar texto al portapapeles e incrementar contador
+// Copiar texto al portapapeles
 function copiarTexto() {
+    const seleccionActualTextarea = document.getElementById("seleccionActual");
+    if (seleccionActualTextarea.value === "Seleccione país y plataforma" || seleccionActualTextarea.value === "") {
+        alert("No hay nada que copiar o faltan selecciones.");
+        return;
+    }
+    seleccionActualTextarea.select();
+    document.execCommand("copy");
+    alert("GUI copiada al portapapeles.");
+}
+
+// Guardar campaña e incrementar contador
+function guardarCampaña() {
     const pais = document.getElementById("pais").value;
     const plataforma = document.getElementById("plataforma").value;
-    
-    // Validar selecciones requeridas
+    const campañaGUI = document.getElementById("seleccionActual").value.trim(); 
+
     if (pais === "Seleccionar" || plataforma === "Seleccionar-plataforma") {
-        alert("Por favor seleccione ciudad y plataforma");
+        alert("Por favor seleccione país y plataforma antes de guardar.");
         return;
     }
-    
-    // Validar que los contadores estén inicializados
-    if (isNaN(contadores[plataforma][pais])) {
-        contadores[plataforma][pais] = 1;
-        localStorage.setItem(`${plataforma.toLowerCase()}_${pais}_counter`, "1");
+    if (!campañaGUI || campañaGUI === "Seleccione país y plataforma" || campañaGUI.endsWith("-") || campañaGUI.includes("--")) { // Chequeo básico de validez
+        alert("No hay campaña válida para guardar o faltan datos en los campos.");
+        return;
+    }
+
+    // Guardar en el historial de campañas guardadas (para la página campanas_guardadas.html)
+    let campañasGuardadas = JSON.parse(localStorage.getItem("campañasGuardadas") || "[]");
+    if (!campañasGuardadas.includes(campañaGUI)) {
+        campañasGuardadas.push(campañaGUI);
+        localStorage.setItem("campañasGuardadas", JSON.stringify(campañasGuardadas));
+    }
+
+    // Guardar en el historial de GUIs generadas (el que se muestra en la lista de esta página)
+    if (!historial.includes(campañaGUI)) {
+        historial.unshift(campañaGUI); 
+        if (historial.length > 20) historial.pop(); 
+        localStorage.setItem('historialGUIs', JSON.stringify(historial));
+        mostrarHistorial(); 
+    }
+
+    // Incrementar el contador para la combinación país/plataforma
+    const plataformaKey = plataforma;
+    if (!contadores[plataformaKey]) contadores[plataformaKey] = {}; 
+    if (contadores[plataformaKey][pais] === undefined) {
+        contadores[plataformaKey][pais] = 1; 
     }
     
-    const campana = document.getElementById("campana").value;
-    const fecha = document.getElementById("fecha").value;
-    const nombreSeleccionado = document.getElementById("busquedaReloj").value;
-    const idReloj = document.getElementById("idReloj").value;
-    const persona = document.getElementById("persona").value;
-    const numImportacion = document.getElementById("numImportacion").value;
+    contadores[plataformaKey][pais]++; 
+    localStorage.setItem(`${plataformaKey.toLowerCase()}_${pais}_counter`, contadores[plataformaKey][pais].toString());
     
-    let prefijo = plataforma === 'FACEBOOK' ? 'F' : 'T';
-    const numero = obtenerYIncrementarContador(pais, plataforma);
-    
-    const textoFinal = `${pais}-${prefijo}${numero.toString().padStart(3, '0')}-${campana}-${fecha}-${nombreSeleccionado}-${idReloj}-${persona}-${numImportacion}`;
-    
-    // Actualizar interfaz
-    document.getElementById("seleccionActual").value = textoFinal;
-    document.getElementById("seleccionActual").select();
-    document.execCommand("copy");
-    
-    // Agregar al historial y guardar
-    historial.unshift(textoFinal);
-    if (historial.length > 20) historial.pop();
-    localStorage.setItem('historialGUIs', JSON.stringify(historial));
-    mostrarHistorial();
-    
-    alert("GUI copiada al portapeles. Contador incrementado.");
+    alert("Campaña guardada y contador incrementado.");
+
+    // Actualizar el textarea para que muestre el GUI con el *nuevo* valor del contador (el siguiente disponible)
+    actualizarSeleccion(); 
 }
 
-// Obtener y aumentar contador (solo se llama al copiar)
-function obtenerYIncrementarContador(pais, plataforma) {
-    const plataformaKey = plataforma === 'FACEBOOK' ? 'FACEBOOK' : 'TIKTOK';
-    const numeroActual = contadores[plataformaKey][pais];
-    
-    // Incrementar y guardar
-    contadores[plataformaKey][pais]++;
-    localStorage.setItem(`${plataformaKey.toLowerCase()}_${pais}_counter`, contadores[plataformaKey][pais]);
-    
-    return numeroActual.toString().padStart(3, '0');
+// Función para navegar a la página de campañas guardadas
+function irACampañasGuardadas() {
+    // Asegúrate de que el nombre del archivo es exactamente 'campanas_guardadas.html'
+    // y que está en la misma carpeta que tu archivo HTML principal.
+    window.open('campanas_guardadas.html', '_blank');
 }
 
 // Inicializar al cargar la página
 window.onload = function() {
     inicializarContadores();
-    actualizarListaRelojes();
-};
+    actualizarListaRelojes(); 
+    actualizarSeleccion(); 
+
+    // Si tu botón para ver campañas guardadas tiene un ID, puedes asignarle el evento aquí.
+    // Por ejemplo, si tu botón en HTML es: <button id="btnVerCampanas">Ver Campañas Guardadas</button>
+    // Descomenta y ajusta la siguiente línea:
+    // const btnVerCampanas = document.getElementById('btnVerCampanas'); // CAMBIA 'btnVerCampanas' AL ID REAL DE TU BOTÓN
+    // if (btnVerCampanas) {
+    //     btnVerCampanas.addEventListener('click', irACampañasGuardadas);
+    // }
+    // Si ya usas onclick="irACampañasGuardadas()" en el HTML del botón, no necesitas esta parte.
+};  
+
+// La función `mostrarCampañas` que tenías al final parecía ser para mostrar
+// las campañas en la misma página. Si el objetivo es una página separada ('campanas_guardadas.html'),
+// entonces `irACampañasGuardadas` es la función correcta para la navegación.
+// He comentado la función `mostrarCampañas` original ya que `irACampañasGuardadas` es la que necesitas
+// para la redirección.
+/*
+function mostrarCampañas() {
+  const seccion = document.getElementById("campañasGuardadasSeccion"); // Necesitarías este elemento en tu HTML
+  const lista = document.getElementById("listaCampañas"); // Y este también
+  lista.innerHTML = ""; 
+
+  const campañas = JSON.parse(localStorage.getItem("campañasGuardadas") || "[]");
+
+  if (campañas.length === 0) {
+    lista.innerHTML = "<li>No hay campañas guardadas.</li>";
+  } else {
+    campañas.forEach((campana) => {
+      const li = document.createElement("li");
+      li.textContent = campana;
+      lista.appendChild(li);
+    });
+  }
+  if(seccion) { // Verificar que 'seccion' exista antes de modificar su estilo
+      seccion.style.display = seccion.style.display === "none" || seccion.style.display === "" ? "block" : "none";
+  }
+}
+*/
